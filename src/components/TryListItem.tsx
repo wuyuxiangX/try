@@ -50,7 +50,7 @@ export function TryListItem({ directory, onRefresh }: TryListItemProps) {
         <ActionPanel>
           <ActionPanel.Section>
             <Action.OpenWith path={directory.path} onOpen={() => touchDirectory(directory.path)} />
-            <Action.ShowInFinder path={directory.path} onOpen={() => touchDirectory(directory.path)} />
+            <Action.ShowInFinder path={directory.path} />
             <Action.CopyToClipboard
               title="Copy Path"
               content={directory.path}

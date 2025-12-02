@@ -1,6 +1,6 @@
 import { Form, ActionPanel, Action, showToast, Toast, useNavigation } from "@raycast/api";
 import { useState } from "react";
-import { tryClone, isTryCliAvailable } from "../lib/try-cli";
+import { tryClone } from "../lib/try-cli";
 import { basename } from "path";
 
 interface CloneFormProps {
@@ -19,15 +19,6 @@ export function CloneForm({ onSuccess }: CloneFormProps) {
         style: Toast.Style.Failure,
         title: "URL required",
         message: "Please enter a git repository URL",
-      });
-      return;
-    }
-
-    if (!isTryCliAvailable()) {
-      showToast({
-        style: Toast.Style.Failure,
-        title: "Try CLI not found",
-        message: "Please install try CLI first: https://github.com/tobi/try",
       });
       return;
     }
@@ -88,7 +79,10 @@ export function CloneForm({ onSuccess }: CloneFormProps) {
         value={customName}
         onChange={setCustomName}
       />
-      <Form.Description title="Note" text="Uses try CLI to clone with date-prefixed directory name" />
+      <Form.Description
+        title="Note"
+        text="Clones into ~/src/tries with date-prefixed directory name (YYYY-MM-DD-user-repo)"
+      />
     </Form>
   );
 }

@@ -3,14 +3,14 @@ import { useTryDirectories } from "./hooks/useTryDirectories";
 import { TryListItem } from "./components/TryListItem";
 import { CreateForm } from "./components/CreateForm";
 import { CloneForm } from "./components/CloneForm";
-import { TRY_PATH } from "./lib/constants";
+import { getTryPath } from "./lib/constants";
 
 export default function BrowseCommand() {
   const { data: directories, isLoading, revalidate } = useTryDirectories();
 
   return (
     <List isLoading={isLoading} searchBarPlaceholder="Search try directories..." navigationTitle="Try Directories">
-      <List.Section title="Try Directories" subtitle={TRY_PATH}>
+      <List.Section title="Try Directories" subtitle={getTryPath()}>
         {directories?.map((directory) => (
           <TryListItem key={directory.path} directory={directory} onRefresh={revalidate} />
         ))}

@@ -1,5 +1,14 @@
+import { getPreferenceValues } from "@raycast/api";
 import { homedir } from "os";
 import { join } from "path";
 
-export const TRY_PATH = join(homedir(), "src", "tries");
-export const TRY_CLI_PATH = join(homedir(), ".local", "try.rb");
+interface Preferences {
+  tryPath: string;
+}
+
+const DEFAULT_TRY_PATH = join(homedir(), "src", "tries");
+
+export function getTryPath(): string {
+  const { tryPath } = getPreferenceValues<Preferences>();
+  return tryPath || DEFAULT_TRY_PATH;
+}

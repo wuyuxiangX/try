@@ -21,6 +21,16 @@
       "mode": "view"
     }
   ],
+  "preferences": [
+    {
+      "name": "tryPath",
+      "title": "Try Directory Path",
+      "description": "Path to the try directories folder",
+      "type": "directory",
+      "required": false,
+      "default": "~/src/tries"
+    }
+  ],
   "dependencies": {
     "@raycast/api": "^1.103.10",
     "@raycast/utils": "^1.17.0"
