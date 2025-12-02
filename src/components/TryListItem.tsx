@@ -1,15 +1,16 @@
 import { List, ActionPanel, Action, Icon, confirmAlert, Alert, showToast, Toast } from "@raycast/api";
 import { rmSync } from "fs";
 import { TryDirectory } from "../types";
-import { formatRelativeTime } from "../lib/utils";
-import { OpenWithSubmenu } from "./OpenWithSubmenu";
+import { formatRelativeTime, touchDirectory } from "../lib/utils";
+import { CreateForm } from "./CreateForm";
+import { CloneForm } from "./CloneForm";
 
 interface TryListItemProps {
   directory: TryDirectory;
-  onDelete: () => void;
+  onRefresh: () => void;
 }
 
-export function TryListItem({ directory, onDelete }: TryListItemProps) {
+export function TryListItem({ directory, onRefresh }: TryListItemProps) {
   const handleDelete = async () => {
     const confirmed = await confirmAlert({
       title: "Delete Directory",
@@ -28,7 +29,7 @@ export function TryListItem({ directory, onDelete }: TryListItemProps) {
           title: "Deleted",
           message: directory.name,
         });
-        onDelete();
+        onRefresh();
       } catch (error) {
         showToast({
           style: Toast.Style.Failure,
@@ -48,8 +49,8 @@ export function TryListItem({ directory, onDelete }: TryListItemProps) {
       actions={
         <ActionPanel>
           <ActionPanel.Section>
-            <OpenWithSubmenu path={directory.path} />
-            <Action.ShowInFinder path={directory.path} />
+            <Action.OpenWith path={directory.path} onOpen={() => touchDirectory(directory.path)} />
+            <Action.ShowInFinder path={directory.path} onOpen={() => touchDirectory(directory.path)} />
             <Action.CopyToClipboard
               title="Copy Path"
               content={directory.path}
@@ -57,9 +58,17 @@ export function TryListItem({ directory, onDelete }: TryListItemProps) {
             />
           </ActionPanel.Section>
           <ActionPanel.Section>
-            <Action.CreateQuicklink
-              title="Create Quicklink"
-              quicklink={{ link: directory.path, name: directory.displayName || directory.name }}
+            <Action.Push
+              title="Create New Directory"
+              icon={Icon.Plus}
+              shortcut={{ modifiers: ["cmd"], key: "n" }}
+              target={<CreateForm onSuccess={onRefresh} />}
+            />
+            <Action.Push
+              title="Clone Repository"
+              icon={Icon.Download}
+              shortcut={{ modifiers: ["cmd"], key: "g" }}
+              target={<CloneForm onSuccess={onRefresh} />}
             />
           </ActionPanel.Section>
           <ActionPanel.Section>
@@ -67,7 +76,7 @@ export function TryListItem({ directory, onDelete }: TryListItemProps) {
               title="Delete"
               icon={Icon.Trash}
               style={Action.Style.Destructive}
-              shortcut={{ modifiers: ["cmd"], key: "backspace" }}
+              shortcut={{ modifiers: ["ctrl"], key: "x" }}
               onAction={handleDelete}
             />
           </ActionPanel.Section>

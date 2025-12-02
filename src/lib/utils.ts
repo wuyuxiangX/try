@@ -1,4 +1,4 @@
-import { readdirSync, statSync, existsSync, mkdirSync } from "fs";
+import { readdirSync, statSync, existsSync, mkdirSync, utimesSync } from "fs";
 import { join } from "path";
 import { TryDirectory } from "../types";
 import { TRY_PATH } from "./constants";
@@ -38,6 +38,14 @@ export function getTryDirectories(): TryDirectory[] {
   return directories.sort((a, b) => b.mtime.getTime() - a.mtime.getTime());
 }
 
+/**
+ * Touch a directory to update its mtime (matching try CLI behavior)
+ */
+export function touchDirectory(path: string): void {
+  const now = new Date();
+  utimesSync(path, now, now);
+}
+
 export function formatRelativeTime(date: Date): string {
   const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
   const minutes = Math.floor(seconds / 60);
@@ -59,15 +67,58 @@ export function generateDatePrefix(): string {
   return `${year}-${month}-${day}`;
 }
 
+/**
+ * Resolve a unique directory name, matching try CLI behavior.
+ * If name ends with digits (e.g., test1), increment the number (test2, test3...).
+ * Otherwise, append -2, -3, etc.
+ */
+function resolveUniqueName(baseName: string): string {
+  const datePrefix = generateDatePrefix();
+  const initial = `${datePrefix}-${baseName}`;
+  const initialPath = join(TRY_PATH, initial);
+
+  if (!existsSync(initialPath)) {
+    return baseName;
+  }
+
+  // Check if name ends with digits
+  const match = baseName.match(/^(.*?)(\d+)$/);
+
+  if (match) {
+    // Name ends with digits, increment the number
+    const stem = match[1];
+    let num = parseInt(match[2], 10) + 1;
+
+    while (true) {
+      const candidate = `${stem}${num}`;
+      const candidatePath = join(TRY_PATH, `${datePrefix}-${candidate}`);
+      if (!existsSync(candidatePath)) {
+        return candidate;
+      }
+      num++;
+    }
+  } else {
+    // No numeric suffix, use -2, -3 style
+    let suffix = 2;
+    while (true) {
+      const candidate = `${baseName}-${suffix}`;
+      const candidatePath = join(TRY_PATH, `${datePrefix}-${candidate}`);
+      if (!existsSync(candidatePath)) {
+        return candidate;
+      }
+      suffix++;
+    }
+  }
+}
+
 export function createTryDirectory(name: string): string {
   const datePrefix = generateDatePrefix();
   const sanitizedName = name.replace(/\s+/g, "-").toLowerCase();
-  const dirName = `${datePrefix}-${sanitizedName}`;
+  const uniqueName = resolveUniqueName(sanitizedName);
+  const dirName = `${datePrefix}-${uniqueName}`;
   const fullPath = join(TRY_PATH, dirName);
 
-  if (!existsSync(fullPath)) {
-    mkdirSync(fullPath, { recursive: true });
-  }
+  mkdirSync(fullPath, { recursive: true });
 
   return fullPath;
 }

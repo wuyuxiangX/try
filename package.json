@@ -19,20 +19,6 @@
       "subtitle": "Try",
       "description": "Browse and manage your try directories",
       "mode": "view"
-    },
-    {
-      "name": "create",
-      "title": "Create Try Directory",
-      "subtitle": "Try",
-      "description": "Create a new date-prefixed try directory",
-      "mode": "view"
-    },
-    {
-      "name": "clone",
-      "title": "Clone to Try Directory",
-      "subtitle": "Try",
-      "description": "Clone a git repository into a try directory",
-      "mode": "view"
     }
   ],
   "dependencies": {
