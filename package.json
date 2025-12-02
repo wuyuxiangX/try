@@ -2,8 +2,8 @@
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "try",
   "title": "Try",
-  "description": "Manage ephemeral workspace directories with the try CLI",
-  "icon": "extension-icon.png",
+  "description": "Manage ephemeral workspace directories for experiments. A Raycast port of tobi/try.",
+  "icon": "icon.png",
   "author": "wuyuxiangX",
   "platforms": [
     "macOS"
