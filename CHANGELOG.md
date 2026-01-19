@@ -7,4 +7,4 @@
 - Implemented recursive directory creation to prevent ENOENT errors
 - Added path expansion utility for tilde paths
 
-## [Initial Version] - {PR_MERGE_DATE}
+## [Initial Version] - 2026-01-15
